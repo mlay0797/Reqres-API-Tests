@@ -57,7 +57,7 @@ LATENCY_BUDGET_S=2.5 pytest -m performance   --html=reports/report_perf.html --s
 - **Readable by Design:** Optimized for clarity and demonstration value rather than raw coverage volume.
 
 ### Assumptions
-- No official OpenAPI was provided, so I **derived** a minimal schema from live responses + docs examples.
+- No official OpenAPI was provided, so I derived a minimal schema from live responses + docs examples.
 - `additionalProperties: true` is kept in the schema to avoid overfitting to sample payloads.
 
 ## Test Output
