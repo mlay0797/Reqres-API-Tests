@@ -12,7 +12,6 @@ A **pytest** suite for the **Reqres** Users API.
 
 ## Project Structure
 ```text
-.
 ├─ conftest.py                  # api fixture + session config (API key, no proxies)
 ├─ tests/
 │  ├─ test_users_api.py         # CRUD + negatives + pagination + optional perf
