@@ -24,7 +24,6 @@ A small, readable **pytest** suite for the **Reqres** Users API.
 └─ reports/                     # HTML/JUnit reports (artifact in CI)
 Setup & Run (macOS / Linux)
 bash
-Copy code
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -38,18 +37,19 @@ pytest -m "not performance" \
 open reports/report.html   # macOS (use xdg-open on Linux)
 Enable perf checks (optional)
 bash
-Copy code
+
 # Adjust if your network is slower
 LATENCY_BUDGET_S=2.5 pytest -m performance \
   --html=reports/report_perf.html --self-contained-html
-Design & Reasoning (Matthew)
-Contract first, then negatives. Verify happy-path CRUD to establish the observed contract, then add targeted negatives/edges (404, extra/missing fields, non-existent update, double delete).
 
-Schema over magic values. Validate the shape of list responses with JSON Schema (draft-07) instead of hardcoding counts/IDs. This catches real regressions (missing/renamed fields, wrong types) without flaking on demo data.
+Design & Reasoning
+-Contract first, then negatives. Verify happy-path CRUD to establish the observed contract, then add targeted negatives/edges (404, extra/missing fields, non-existent update, double delete).
 
-Document mock quirks. Reqres may echo unknown fields on POST, return 200 for PUT on non-existent, and 204 for repeated DELETEs. Tests accept and document that behavior.
+-Schema over magic values. Validate the shape of list responses with JSON Schema (draft-07) instead of hardcoding counts/IDs. This catches real regressions (missing/renamed fields, wrong types) without flaking on demo data.
 
-Stable runs. The suite injects the free API key and disables proxies so it runs cleanly on any machine/CI. Performance checks are lightweight and opt-in to avoid network flakiness on a public mock.
+-Document mock quirks. Reqres may echo unknown fields on POST, return 200 for PUT on non-existent, and 204 for repeated DELETEs. Tests accept and document that behavior.
+
+-Stable runs. The suite injects the free API key and disables proxies so it runs cleanly on any machine/CI. Performance checks are lightweight and opt-in to avoid network flakiness on a public mock.
 
 Assumptions
 No official OpenAPI was provided, so I derived a minimal schema from live responses + docs examples.
