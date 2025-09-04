@@ -42,12 +42,20 @@ open reports/report.html
 # Adjust if your network is slower
 LATENCY_BUDGET_S=2.5 pytest -m performance   --html=reports/report_perf.html --self-contained-html
 ```
+## Test Strategy
+- **CRUD Coverage:** Validated create, read, update, and delete flows against Reqres API docs.  
+- **Negative Cases:** Checked invalid IDs, malformed payloads, and unsupported methods to confirm error handling.  
+- **Schema Validation:** Enforced response structure and types with JSON Schema (user object and user list).  
+- **Pagination & Lists:** Verified paging mechanics and list shapes beyond single-record CRUD.  
+- **Performance (Opt-in):** Added simple latency checks with a default budget (2.5s), disabled by default to avoid flakiness.  
 
 ## Design & Reasoning
-- **Contract first, then negatives.** Verify happy-path CRUD to establish the observed contract, then add targeted negatives/edges (404, extra/missing fields, non-existent update, double delete).
-- **Schema over magic values.** Validate the **shape** of list responses with JSON Schema (draft-07) instead of hardcoding counts/IDs—this catches real regressions (missing/renamed fields, wrong types) without flaking on demo data.
-- **Document mock quirks.** Reqres may echo unknown fields on POST, return `200` for PUT on non-existent, and `204` for repeated DELETEs. Tests accept and document that behavior.
-- **Stable runs.** The suite injects the free API key and disables proxies so it runs cleanly on any machine/CI. Performance checks are lightweight and **opt-in** to avoid network flakiness on a public mock.
+- **Contract First Approach:** Began with the “happy path” to define the observed API contract, then layered negatives and edge cases for depth.  
+- **Choosing JSON Schema:** Reqres docs provide only sample payloads, so I derived the schema manually by analyzing example responses (fields, types, required vs optional). I used JSON Schema draft-07 to formalize this contract, ensuring responses are validated structurally rather than by brittle value checks.  
+- **Schema over Hardcoding:** Chose schema validation over asserting on specific counts or IDs, catching meaningful regressions (missing/renamed fields, wrong types) without false failures on demo data.  
+- **Mock API Awareness:** Documented quirks (e.g., POST echoes extra fields, PUT returns `200` on non-existent records, repeated DELETEs return `204`) so tests reflect real Reqres behavior.  
+- **Stable & Portable Runs:** Disabled proxies, added API key injection, and kept perf checks opt-in to ensure reproducibility in CI or local runs.  
+- **Readable by Design:** Optimized for clarity and demonstration value rather than raw coverage volume.
 
 ### Assumptions
 - No official OpenAPI was provided, so I **derived** a minimal schema from live responses + docs examples.
