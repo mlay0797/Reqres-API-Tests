@@ -56,5 +56,12 @@ No official OpenAPI was provided, so I derived a minimal schema from live respon
 
 I keep additionalProperties: true in the schema to avoid overfitting to sample payloads.
 
+## Test Output
+The latest local run is committed under `docs/`:
+
+- [HTML report](./docs/report.html) — download and open locally
+- [JUnit XML](./docs/junit.xml)
+- [Run info](./docs/REPORT_INFO.txt)
+
 CI
 The workflow at ./.github/workflows/ci.yml runs the core suite on Python 3.10 & 3.11, caches pip, cancels stale runs, and uploads reports/ as an artifact. Performance tests remain opt-in.
