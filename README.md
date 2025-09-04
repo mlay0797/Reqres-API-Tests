@@ -50,7 +50,7 @@ LATENCY_BUDGET_S=2.5 pytest -m performance   --html=reports/report_perf.html --s
 
 ## Design & Reasoning
 - **Contract First Approach:** Began with the “happy path” to define the observed API contract, then layered negatives and edge cases for depth.  
-- **Choosing JSON Schema:** Reqres docs provide only sample payloads, so I derived the schema manually by analyzing example responses (fields, types, required vs optional). I used JSON Schema draft-07 to formalize this contract, ensuring responses are validated structurally rather than by brittle value checks.  
+- **Choosing JSON Schema:** Reqres docs provide only sample payloads, so I derived the schema manually by analyzing example responses (fields, types, required vs optional). I used JSON Schema draft-07 to formalize this contract, ensuring responses are validated structurally rather than by weak value checks.  
 - **Schema over Hardcoding:** Chose schema validation over asserting on specific counts or IDs, catching meaningful regressions (missing/renamed fields, wrong types) without false failures on demo data.  
 - **Mock API Awareness:** Documented quirks (e.g., POST echoes extra fields, PUT returns `200` on non-existent records, repeated DELETEs return `204`) so tests reflect real Reqres behavior.  
 - **Stable & Portable Runs:** Disabled proxies, added API key injection, and kept perf checks opt-in to ensure reproducibility in CI or local runs.  
