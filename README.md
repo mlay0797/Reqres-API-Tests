@@ -1,37 +1,62 @@
-
-# ReqRes API Tests
+# Reqres API Tests
+[![CI](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml/badge.svg)](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml)
 
 A small, readable **pytest** suite for the **ReqRes** Users API.
-- Always sends the free API key (`x-api-key: reqres-free-v1`)
-- Disables proxies (`trust_env=False`) to avoid surprise 401s
-- Covers **GET/POST/PUT/DELETE**, negatives, pagination, and schema checks
-- Includes optional lightweight **performance** tests (skipped by default in CI)
+
+**Highlights**
+- Sends the free API key automatically (`x-api-key: reqres-free-v1`)
+- Disables proxies (`trust_env=False`) to avoid surprise 401s on corporate/VPN networks
+- Covers **GET /users (pagination), GET /users/{id}, POST /users, PUT /users/{id}, DELETE /users/{id}**
+- Negative & edge cases: 404 user, extra/missing fields on create, update non-existent user, double delete
+- Optional lightweight **performance** checks (skipped by default in CI)
+
+## Project Structure
+.
+├─ conftest.py # api fixture + session config (API key, no proxies)
+├─ tests/
+│ ├─ test_users_api.py # CRUD + negatives + pagination + optional perf
+│ └─ schemas/
+│ └─ user_list_schema.json # JSON Schema for GET /users?page=n shape
+├─ .github/workflows/ci.yml # CI: runs core tests, uploads reports
+├─ requirements.txt
+├─ pytest.ini
+└─ reports/ # HTML/JUnit reports (artifact in CI)
+
+bash
+Copy code
 
 ## Setup & Run (macOS / Linux)
-
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
 mkdir -p reports
-pytest -m "not performance"   --junitxml=reports/junit.xml   --html=reports/report.html --self-contained-html
+pytest -m "not performance" \
+  --junitxml=reports/junit.xml \
+  --html=reports/report.html --self-contained-html
 
 # Open the HTML report
-open reports/report.html  # macOS; use 'xdg-open' on Linux
-```
+open reports/report.html   # macOS (use xdg-open on Linux)
+Enable perf checks (optional)
+bash
+Copy code
+# Adjust if your network is slower
+LATENCY_BUDGET_S=2.5 pytest -m performance \
+  --html=reports/report_perf.html --self-contained-html
+Design & Reasoning (Matthew)
+Contract first, then negatives. I verify happy-path CRUD to establish the observed contract, then add targeted negatives/edges (404, extra/missing fields, non-existent update, double delete).
 
-### Enable perf checks (optional)
-```bash
-LATENCY_BUDGET_S=2.5 pytest -m performance   --html=reports/report_perf.html --self-contained-html
-```
+Schema over magic values. I validate the shape of list responses with JSON Schema (draft-07) instead of hardcoding counts/IDs. This catches real regressions (missing/renamed fields, wrong types) without flaking on demo data.
 
-## Design & Reasoning
+Document mock quirks. ReqRes may echo unknown fields on POST, return 200 for PUT on non-existent, and 204 for repeated DELETEs. Tests accept and document that behavior.
 
-- **Contract first, then negatives.** Start with happy-path CRUD to lock the observed contract, then add high‑value negatives (404 user, update non‑existent, double delete) and edge cases (missing/extra fields).
-- **Schema over magic values.** Use JSON Schema to catch over/under‑return without hardcoding specific values.
-- **Stable** The suite injects the free ReqRes API key and disables proxies so it runs cleanly on any machine/CI.
-- **Performance is light.** A tiny latency guard is included but kept optional to avoid network flakiness; CI skips it by default.
+Stable runs. The suite injects the free API key and disables proxies so it runs cleanly on any machine/CI. Performance checks are lightweight and opt-in to avoid network flakiness on a public mock.
 
-## CI
-A GitHub Actions workflow is included at `.github/workflows/ci.yml`. It installs deps, runs tests **excluding** perf, and uploads `reports/` as an artifact.
+Assumptions
+No official OpenAPI was provided, so I derived a minimal schema from live responses + docs examples.
+
+I keep additionalProperties: true in the schema to avoid overfitting to sample payloads.
+
+CI
+./.github/workflows/ci.yml runs the core suite on Python 3.10 & 3.11, caches pip, cancels stale runs, and uploads reports/ as an artifact. Performance tests remain opt-in.
