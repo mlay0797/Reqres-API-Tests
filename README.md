@@ -11,8 +11,6 @@ A small, readable **pytest** suite for the **Reqres** Users API.
 - Optional lightweight **performance** checks (skipped by default in CI)
 
 ## Project Structure
-```text
-.
 ├─ conftest.py                  # api fixture + session config (API key, no proxies)
 ├─ tests/
 │  ├─ test_users_api.py         # CRUD + negatives + pagination + optional perf
