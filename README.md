@@ -1,7 +1,7 @@
 # Reqres API Tests
 [![CI](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml/badge.svg)](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml)
 
-A small, readable **pytest** suite for the **Reqres** Users API.
+A **pytest** suite for the **Reqres** Users API.
 
 ## Highlights
 - Sends the free API key automatically (`x-api-key: reqres-free-v1`)
