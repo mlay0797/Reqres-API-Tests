@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "page",
+    "per_page",
+    "total",
+    "total_pages",
+    "data"
+  ],
+  "properties": {
+    "page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "per_page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_pages": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "avatar"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
