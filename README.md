@@ -1,4 +1,4 @@
-# Reqres API Tests
+# ReqRes API Tests
 [![CI](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml/badge.svg)](https://github.com/mlay0797/Reqres-API-Tests/actions/workflows/ci.yml)
 
 A **pytest** suite for the **Reqres** Users API.
